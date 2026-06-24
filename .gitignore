@@ -1,0 +1,53 @@
+# ─── Environment Variables & Secrets ────────────────────────────────────────────
+.env
+.env.local
+.env.test
+.env*.local
+.env.production
+
+# ─── Next.js Build Outputs ───────────────────────────────────────────────────────
+.next/
+.next-prod/
+out/
+
+# ─── TypeScript Build Cache ───────────────────────────────────────────────────────
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ─── Node Dependencies ────────────────────────────────────────────────────────────
+node_modules/
+
+# ─── All Log Files ────────────────────────────────────────────────────────────────
+*.log
+.*.log
+prod.log
+prod.err.log
+tunnel.log
+tunnel.out.log
+
+# ─── All PNG Images (test screenshots) ───────────────────────────────────────────
+*.png
+
+# ─── Playwright MCP Artifacts ─────────────────────────────────────────────────────
+.playwright-mcp/
+
+# ─── Binaries ─────────────────────────────────────────────────────────────────────
+*.exe
+cloudflared.exe
+
+# ─── Cloudflare Tunnel ────────────────────────────────────────────────────────────
+.cloudflare/
+
+# ─── Claude Code ──────────────────────────────────────────────────────────────────
+.claude/
+
+# ─── OS & Editor Junk ─────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# ─── Misc Runtime ─────────────────────────────────────────────────────────────────
+.vercel
+.turbo

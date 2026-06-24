@@ -1,0 +1,42 @@
+{
+  "name": "whatsapp-crm",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "tsx server.ts",
+    "prod": "node scripts/run-prod.mjs",
+    "serve": "node scripts/serve-prod.mjs",
+    "check": "node scripts/check.mjs",
+    "clean": "node scripts/clean.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:integration": "vitest run tests/integration/",
+    "tunnel": "cloudflared.exe tunnel --config .cloudflare/config.yml run briq"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "date-fns": "^3.6.0",
+    "date-fns-tz": "^3.2.0",
+    "mammoth": "^1.8.0",
+    "next": "14.2.5",
+    "node-cron": "^3.0.3",
+    "openai": "^4.56.0",
+    "pdf-parse": "^1.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.15",
+    "@types/node-cron": "^3.0.11",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "dotenv": "^17.4.2",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.9",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "vitest": "^4.1.9"
+  }
+}

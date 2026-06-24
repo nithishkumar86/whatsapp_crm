@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================================
+   SITE-WIDE DARK THEME
+   ---------------------------------------------------------------------
+   Toggled by the `dark` class on <html> (see components/ThemeToggle.tsx).
+   The whole CRM uses a consistent gray/white surface palette, so instead
+   of sprinkling `dark:` variants across every component we remap that
+   exact palette here, scoped under `.dark`. `.dark .bg-white` (specificity
+   0,2,0) always beats the plain `.bg-white` utility (0,1,0), so these win
+   regardless of source order. Brand emerald/green gradients are left as-is
+   (they read well on dark and keep the brand identity).
+   ===================================================================== */
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0e1411;
+  color: #eef2f0;
+}
+
+/* ---- Surface backgrounds ---- */
+.dark .bg-white { background-color: #18211d; }
+.dark .bg-gray-50 { background-color: #141c18; }
+.dark .bg-gray-100 { background-color: #0e1411; }
+.dark .bg-gray-200 { background-color: #1e2a25; }
+
+/* ---- Hover backgrounds ---- */
+.dark .hover\:bg-gray-50:hover { background-color: #1b241f; }
+.dark .hover\:bg-gray-100:hover { background-color: #1e2a25; }
+.dark .hover\:bg-gray-200:hover { background-color: #243029; }
+
+/* ---- Text ---- */
+.dark .text-gray-900 { color: #eef2f0; }
+.dark .text-gray-800 { color: #e2e8e5; }
+.dark .text-gray-700 { color: #cfd6d2; }
+.dark .text-gray-600 { color: #aeb6b2; }
+.dark .text-gray-500 { color: #939b97; }
+.dark .text-gray-400 { color: #757d79; }
+.dark .text-gray-300 { color: #5c635f; }
+.dark .hover\:text-gray-900:hover { color: #eef2f0; }
+.dark .hover\:text-gray-600:hover { color: #aeb6b2; }
+
+/* ---- Borders ---- */
+.dark .border-gray-100 { border-color: #202b26; }
+.dark .border-gray-200 { border-color: #26332d; }
+.dark .border-gray-300 { border-color: #2d3b34; }
+.dark .border-gray-400 { border-color: #35463e; }
+.dark .hover\:border-gray-200:hover { border-color: #26332d; }
+.dark .hover\:border-gray-400:hover { border-color: #35463e; }
+
+/* ---- Dividers (divide-gray-100 between table rows / list items) ---- */
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #202b26; }
+
+/* ---- Form controls ---- */
+.dark input,
+.dark textarea,
+.dark select { color: #eef2f0; }
+.dark ::placeholder { color: #757d79; opacity: 1; }
+
+/* =====================================================================
+   TINTED SURFACES (status pills, alert boxes, highlighted sections)
+   ---------------------------------------------------------------------
+   The gray/white remap above darkens the page chrome, but table-heavy
+   pages (/dashboard, /whatsapp chat) also use light *tinted* surfaces —
+   emerald/green/red/blue/indigo/amber 50–100 — for status badges and
+   callouts. Left untouched they stay bright pastel on a dark page, which
+   reads as "still light". Here we remap those tints to dark, brand-tinted
+   surfaces and lighten the matching accent text so it stays legible.
+   The 500+ saturated brand fills (buttons, dots) are intentionally left.
+   ===================================================================== */
+
+/* ---- Tinted backgrounds (solid) ---- */
+.dark .bg-emerald-50 { background-color: #102a1f; }
+.dark .bg-emerald-100 { background-color: #123528; }
+.dark .bg-green-100 { background-color: #123528; }
+.dark .bg-red-50 { background-color: #2c1517; }
+.dark .bg-red-100 { background-color: #35181b; }
+.dark .bg-blue-50 { background-color: #0f2036; }
+.dark .bg-blue-100 { background-color: #122a44; }
+.dark .bg-indigo-50 { background-color: #181c38; }
+.dark .bg-amber-100 { background-color: #312713; }
+.dark .bg-gray-300 { background-color: #2d3b34; }
+.dark .bg-gray-400 { background-color: #3a4a42; }
+
+/* ---- Tinted backgrounds (opacity variants — force solid dark) ---- */
+.dark .bg-emerald-50\/40,
+.dark .bg-emerald-50\/50,
+.dark .bg-emerald-50\/60,
+.dark .bg-emerald-50\/80 { background-color: #0f241b; }
+.dark .bg-emerald-100\/70 { background-color: #123528; }
+.dark .bg-indigo-50\/50 { background-color: #181c38; }
+.dark .bg-gray-50\/40 { background-color: #141c18; }
+
+/* ---- Tinted hover backgrounds ---- */
+.dark .hover\:bg-emerald-50:hover,
+.dark .hover\:bg-emerald-50\/40:hover,
+.dark .hover\:bg-emerald-50\/60:hover { background-color: #163326; }
+.dark .hover\:bg-emerald-100:hover,
+.dark .hover\:bg-emerald-100\/70:hover { background-color: #194231; }
+.dark .hover\:bg-red-50:hover { background-color: #3a1b1e; }
+.dark .hover\:bg-blue-100:hover { background-color: #173552; }
+.dark .hover\:bg-indigo-50:hover { background-color: #20254a; }
+
+/* ---- Accent text (lightened so it reads on the dark tints/cards) ---- */
+.dark .text-emerald-700 { color: #6ee7b7; }
+.dark .text-emerald-600 { color: #54d6a0; }
+.dark .text-emerald-500 { color: #4ccb97; }
+.dark .text-emerald-400 { color: #6ee7b7; }
+.dark .text-green-700 { color: #6ee7b7; }
+.dark .text-green-600 { color: #54d6a0; }
+.dark .text-red-700 { color: #f4a6a6; }
+.dark .text-red-600 { color: #f08c8c; }
+.dark .text-red-500 { color: #ee8e8e; }
+.dark .text-blue-700 { color: #9cc0f7; }
+.dark .text-blue-600 { color: #84acf1; }
+.dark .text-indigo-700 { color: #aab6fb; }
+.dark .text-indigo-600 { color: #9aa8f8; }
+.dark .text-indigo-500 { color: #9aa8f8; }
+.dark .text-amber-700 { color: #f1c879; }
+
+/* ---- Tinted borders ---- */
+.dark .border-emerald-200 { border-color: #1d4636; }
+.dark .border-emerald-300 { border-color: #235a43; }
+.dark .border-emerald-400 { border-color: #2a6b4f; }
+.dark .border-indigo-200 { border-color: #2a2f55; }
+.dark .border-indigo-300 { border-color: #353c6b; }
+.dark .border-indigo-400 { border-color: #424a85; }
+
+/* ---- Guard: white-on-green chips stay white with DARK green text ----
+   The active sidebar/cron items and the ThemeToggle "Light" button use
+   `bg-white/90` (an opacity variant the override does NOT darken, so the
+   chip stays white on the always-green rail). Their `text-*-700` accent is
+   lightened above, which would be light-on-white — so re-assert dark text
+   here. Two-class selectors (0,3,0) outrank the single-class remap (0,2,0). */
+.dark .bg-white\/90.text-green-700 { color: #15803d; }
+.dark .bg-white\/90.text-emerald-700 { color: #047857; }
