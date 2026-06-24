@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Session auth middleware.
  *
- * Protects /whatsapp and all /api/* routes EXCEPT the two public webhooks
+ * Protects /main and all /api/* routes EXCEPT the two public webhooks
  * (/api/webhook/whatsapp, /api/webhook/3sigma) and the auth endpoints
  * (/api/auth/login, /api/auth/logout).
  *
@@ -96,13 +96,13 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   const isApi = pathname.startsWith('/api/');
-  const isDashboard = pathname === '/whatsapp' || pathname.startsWith('/whatsapp/');
+  const isDashboard = pathname === '/main' || pathname.startsWith('/main/');
   const isHome = pathname === '/home' || pathname.startsWith('/home/');
   const isAdminDash = pathname === '/dashboard' || pathname.startsWith('/dashboard/');
   const isCron = pathname === '/cron' || pathname.startsWith('/cron/');
   const isAnalytics = pathname === '/analytics' || pathname.startsWith('/analytics/');
 
-  // Only /whatsapp, /dashboard, /cron, /analytics, /home and protected /api/* are gated; everything else passes.
+  // Only /main, /dashboard, /cron, /analytics, /home and protected /api/* are gated; everything else passes.
   if (!isApi && !isDashboard && !isHome && !isAdminDash && !isCron && !isAnalytics) {
     return NextResponse.next();
   }
@@ -128,6 +128,6 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  // Run on /whatsapp and all /api routes. Static assets are excluded.
-  matcher: ['/whatsapp/:path*', '/dashboard/:path*', '/cron/:path*', '/analytics/:path*', '/home/:path*', '/api/:path*'],
+  // Run on /main and all /api routes. Static assets are excluded.
+  matcher: ['/main/:path*', '/dashboard/:path*', '/cron/:path*', '/analytics/:path*', '/home/:path*', '/api/:path*'],
 };

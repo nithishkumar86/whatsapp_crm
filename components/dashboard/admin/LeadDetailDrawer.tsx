@@ -122,7 +122,7 @@ export default function LeadDetailDrawer({ lead, onClose }: LeadDetailDrawerProp
 
         <footer className="border-t border-gray-100 p-4">
           <Link
-            href={`/whatsapp/chat?phone=${encodeURIComponent(lead.phone)}`}
+            href={`/main/chat?phone=${encodeURIComponent(lead.phone)}`}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
           >
             <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" stroke="currentColor" strokeWidth={1.8}>

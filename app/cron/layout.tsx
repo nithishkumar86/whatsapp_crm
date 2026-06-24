@@ -17,7 +17,7 @@ export default function CronLayout({ children }: { children: React.ReactNode }) 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between bg-gradient-to-r from-emerald-600 to-green-700 px-4 py-3 text-white shadow-sm sm:px-5">
           <h1 className="text-sm font-semibold tracking-tight sm:text-base">
-            Digital Tamizha <span className="hidden sm:inline">— Cron Reminders</span>
+            BRIQ Foundation <span className="hidden sm:inline">— Cron Reminders</span>
           </h1>
           <Link
             href="/home"

@@ -20,11 +20,11 @@ export default function Home() {
 
       <div className="w-full max-w-4xl text-center">
         <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-700 text-xl font-bold text-white shadow-md">
-          DT
+          BF
         </div>
 
         <h1 className="mb-2 text-3xl font-bold text-white sm:text-4xl">
-          Welcome to BRIQ Foundation WhatsApp CRM
+          Welcome to BRIQ Foundation CRM
         </h1>
         <p className="mb-10 text-sm text-emerald-100/90">
           Manage leads, run the AI chatbot, and automate follow-ups — all in one place.
@@ -32,20 +32,26 @@ export default function Home() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Link
-            href="/whatsapp"
+            href="/main"
             className="group flex flex-col items-center gap-3 rounded-2xl border border-white/20 bg-white/10 p-6 text-white shadow-lg backdrop-blur transition hover:-translate-y-1 hover:bg-white/20 hover:shadow-2xl"
           >
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 transition group-hover:bg-white/25">
               <svg
                 viewBox="0 0 24 24"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
                 className="h-7 w-7"
                 aria-hidden="true"
               >
-                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.02h-.01a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.37c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.25 8.24Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.98-.14.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.39.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.16 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+                />
               </svg>
             </span>
-            <span className="text-base font-semibold">WhatsApp</span>
+            <span className="text-base font-semibold">Conversations</span>
             <span className="text-xs text-emerald-50/80">
               Open the lead conversations dashboard
             </span>

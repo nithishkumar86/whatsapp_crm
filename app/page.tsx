@@ -48,10 +48,10 @@ function LoginForm() {
       <div className="w-full max-w-sm rounded-2xl border border-white/20 bg-white p-8 shadow-2xl backdrop-blur">
         <div className="mb-6 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-green-700 text-lg font-bold text-white shadow-md">
-            DT
+            BF
           </div>
-          <h1 className="text-xl font-bold text-gray-900">Digital Tamizha</h1>
-          <p className="text-sm text-gray-500">WhatsApp CRM Dashboard</p>
+          <h1 className="text-xl font-bold text-gray-900">BRIQ Foundation</h1>
+          <p className="text-sm text-gray-500">CRM Dashboard</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

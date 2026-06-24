@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Sidebar from '@/components/dashboard/Sidebar';
 
 /**
- * Shared chrome for every /whatsapp/* route.
+ * Shared chrome for every /main/* route.
  *
  * Left: fixed icon sidebar (Chat | Calendar | Agent | Crons + Logout).
  * Right: the active route renders full-page in the main area.
@@ -17,7 +17,7 @@ export default function WhatsAppLayout({ children }: { children: React.ReactNode
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between bg-gradient-to-r from-emerald-600 to-green-700 px-4 py-3 text-white shadow-sm sm:px-5">
           <h1 className="text-sm font-semibold tracking-tight sm:text-base">
-            BRIQ Foundation <span className="hidden sm:inline">— WhatsApp CRM</span>
+            BRIQ Foundation <span className="hidden sm:inline">— CRM</span>
           </h1>
           <Link
             href="/home"

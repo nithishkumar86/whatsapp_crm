@@ -137,7 +137,7 @@ export function buildSystemPrompt(
   parts.push(
     instructions && instructions.trim()
       ? instructions.trim()
-      : 'You are a helpful WhatsApp assistant for Digital Tamizha Real Estate.',
+      : 'You are a helpful WhatsApp assistant for BRIQ Foundation.',
   );
   if (extras?.dateLine) parts.push(extras.dateLine);
   if (propertyContext) parts.push(propertyContext);

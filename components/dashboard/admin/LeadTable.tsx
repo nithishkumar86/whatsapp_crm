@@ -282,7 +282,7 @@ export default function LeadTable({ title, filter, fullTable = false }: LeadTabl
                         <td className="sticky right-0 bg-white px-4 py-3 align-top">
                           <div className="flex items-center justify-end gap-2">
                             <Link
-                              href={`/whatsapp/chat?phone=${encodeURIComponent(r.phone)}`}
+                              href={`/main/chat?phone=${encodeURIComponent(r.phone)}`}
                               className="whitespace-nowrap rounded-lg bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-700"
                             >
                               Open Chat
@@ -352,7 +352,7 @@ export default function LeadTable({ title, filter, fullTable = false }: LeadTabl
                             View
                           </button>
                           <Link
-                            href={`/whatsapp/chat?phone=${encodeURIComponent(r.phone)}`}
+                            href={`/main/chat?phone=${encodeURIComponent(r.phone)}`}
                             className="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-700"
                           >
                             Open Chat
@@ -409,7 +409,7 @@ export default function LeadTable({ title, filter, fullTable = false }: LeadTabl
                         View
                       </button>
                       <Link
-                        href={`/whatsapp/chat?phone=${encodeURIComponent(r.phone)}`}
+                        href={`/main/chat?phone=${encodeURIComponent(r.phone)}`}
                         className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 text-center text-xs font-semibold text-white transition hover:bg-emerald-700"
                       >
                         Open Chat

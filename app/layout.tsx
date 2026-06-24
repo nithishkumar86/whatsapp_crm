@@ -7,8 +7,8 @@ import ThemeManager from '@/components/ThemeManager';
  */
 
 export const metadata: Metadata = {
-  title: 'Digital Tamizha — WhatsApp CRM',
-  description: 'WhatsApp CRM dashboard for Digital Tamizha Real Estate.',
+  title: 'BRIQ Foundation — CRM',
+  description: 'CRM dashboard for BRIQ Foundation.',
 };
 
 /**

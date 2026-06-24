@@ -213,7 +213,7 @@ export default function AnalyticsPage() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between bg-gradient-to-r from-emerald-600 to-green-700 px-4 py-3 text-white shadow-sm sm:px-5">
           <h1 className="text-sm font-semibold tracking-tight sm:text-base">
-            Digital Tamizha <span className="hidden sm:inline">— Lead Analytics</span>
+            BRIQ Foundation <span className="hidden sm:inline">— Lead Analytics</span>
           </h1>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link

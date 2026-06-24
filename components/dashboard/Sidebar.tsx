@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 /**
- * Vertical icon rail for the /whatsapp dashboard.
+ * Vertical icon rail for the /main dashboard.
  *
  * Four primary destinations (Chat, Calendar, Agent, Crons), each rendered as
  * an icon button. Hovering an icon reveals its label as a tooltip; clicking
@@ -23,7 +23,7 @@ const NAV: NavItem[] = [
   {
     key: 'chat',
     label: 'Chat',
-    href: '/whatsapp/chat',
+    href: '/main/chat',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.8}>
         <path
@@ -37,7 +37,7 @@ const NAV: NavItem[] = [
   {
     key: 'calendar',
     label: 'Calendar',
-    href: '/whatsapp/calendar',
+    href: '/main/calendar',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.8}>
         <path
@@ -51,7 +51,7 @@ const NAV: NavItem[] = [
   {
     key: 'agent',
     label: 'Agent',
-    href: '/whatsapp/agent',
+    href: '/main/agent',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.8}>
         <path
@@ -65,7 +65,7 @@ const NAV: NavItem[] = [
   {
     key: 'crons',
     label: 'Crons',
-    href: '/whatsapp/crons',
+    href: '/main/crons',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth={1.8}>
         <path
@@ -91,7 +91,7 @@ export default function Sidebar() {
       {/* Brand mark */}
       <div className="flex flex-col items-center gap-6">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 text-sm font-bold">
-          DT
+          BF
         </div>
 
         {/* Nav icons */}
