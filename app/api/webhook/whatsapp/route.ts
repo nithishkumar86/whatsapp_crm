@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { supabase } from '@/lib/supabase';
-import { sendText, sendMedia } from '@/lib/whatsapp';
+import { sendText, sendMedia, invalidateCredentialsCache } from '@/lib/whatsapp';
 import {
   generateAIReply,
   bookAppointment,
@@ -26,6 +27,49 @@ import {
  */
 
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN;
+const APP_SECRET = process.env.META_APP_SECRET;
+
+/**
+ * Largest webhook body we will accept (bytes). Meta's payloads are small; the
+ * coexistence `history` / `smb_app_state_sync` events are the biggest and stay
+ * well under this. A cap matters because those payloads are persisted verbatim
+ * into whatsapp_sync_events.
+ */
+const MAX_BODY_BYTES = 1_000_000; // 1 MB
+
+// The signature check is a deliberate no-op when META_APP_SECRET is unset so
+// that pre-existing deployments keep working. That silence is dangerous in
+// production, so say so loudly once at startup.
+if (!APP_SECRET && process.env.NODE_ENV === 'production') {
+  // eslint-disable-next-line no-console
+  console.warn(
+    '[whatsapp webhook] WARNING: META_APP_SECRET is not set — X-Hub-Signature-256 ' +
+      'verification is DISABLED and this webhook will accept unauthenticated payloads.',
+  );
+}
+
+/**
+ * Verify Meta's X-Hub-Signature-256 over the RAW request body.
+ *
+ * GUARDED: only enforced when META_APP_SECRET is configured. Without it the
+ * webhook behaves exactly as it did before this feature was added, so an
+ * existing deployment can never break by upgrading.
+ */
+function verifySignature(raw: string, header: string | null): boolean {
+  if (!APP_SECRET) return true; // not configured — skip (legacy behaviour)
+  if (!header || !header.startsWith('sha256=')) return false;
+
+  const expected = createHmac('sha256', APP_SECRET).update(raw, 'utf8').digest();
+  let received: Buffer;
+  try {
+    received = Buffer.from(header.slice('sha256='.length), 'hex');
+  } catch {
+    return false;
+  }
+
+  if (received.length !== expected.length) return false;
+  return timingSafeEqual(received, expected);
+}
 
 // ---------------------------------------------------------------------------
 // GET — verification
@@ -72,10 +116,29 @@ interface WaStatus {
   errors?: Array<{ title?: string; message?: string }>;
 }
 
+/**
+ * Coexistence: a message the business sent from the WhatsApp Business App on
+ * the phone. Delivered on the `smb_message_echoes` field.
+ */
+interface WaMessageEcho {
+  id?: string;
+  from?: string; // the business number
+  to?: string; // the customer (this is the lead)
+  type?: string;
+  text?: { body?: string };
+  image?: { caption?: string };
+  document?: { caption?: string; filename?: string };
+}
+
 interface WaChangeValue {
   contacts?: WaContact[];
   messages?: WaMessage[];
   statuses?: WaStatus[];
+  // Coexistence additions (all optional — absent on classic payloads).
+  message_echoes?: WaMessageEcho[];
+  event?: string;
+  phone_number?: string;
+  waba_info?: { waba_id?: string };
 }
 
 const SUPPORTED_TYPES = new Set(['text', 'image', 'document', 'interactive']);
@@ -312,13 +375,119 @@ async function handleMessage(value: WaChangeValue, msg: WaMessage): Promise<void
   }
 }
 
+// ---------------------------------------------------------------------------
+// COEXISTENCE HANDLERS (additive — only fire on the new webhook fields)
+// ---------------------------------------------------------------------------
+
+/**
+ * Handle `smb_message_echoes` — replies the agent typed in the WhatsApp
+ * Business App on the phone. These are stored as OUTBOUND messages so the CRM
+ * chat panel shows them, tagged source='whatsapp_business_app'.
+ *
+ * The AI is deliberately NOT triggered here: a human has already answered.
+ */
+async function handleMessageEchoes(echoes: WaMessageEcho[]): Promise<void> {
+  for (const echo of echoes) {
+    // `to` is the customer and therefore the lead. NEVER fall back to `from`
+    // (the business's own number) — doing so would write our own number into
+    // `leads` as if it were a customer and corrupt the phone-as-primary-key
+    // contract. If `to` is absent the payload is not usable; skip it.
+    const phone = echo.to;
+    if (!phone) {
+      // eslint-disable-next-line no-console
+      console.error('[whatsapp webhook] smb_message_echoes entry missing "to" — skipped');
+      continue;
+    }
+
+    const type = echo.type || 'text';
+    const content =
+      echo.text?.body ||
+      echo.image?.caption ||
+      echo.document?.caption ||
+      echo.document?.filename ||
+      `[${type}]`;
+
+    const nowIso = new Date().toISOString();
+
+    // messages.phone is FK → leads(phone): ensure the lead exists first.
+    await supabase.from('leads').upsert(
+      {
+        phone,
+        last_message_at: nowIso,
+        last_outbound_at: nowIso,
+        last_message_direction: 'outbound',
+      },
+      { onConflict: 'phone' },
+    );
+
+    // Same dedup contract as inbound: unique wa_message_id + ignoreDuplicates
+    // makes Meta's retries safe, and also skips an echo of a message this CRM
+    // itself sent through the Cloud API (already stored under the same id).
+    await supabase.from('messages').upsert(
+      {
+        phone,
+        wa_message_id: echo.id || null,
+        direction: 'outbound',
+        content,
+        message_type: SUPPORTED_TYPES.has(type) ? type : 'text',
+        sent_by: 'agent',
+        source: 'whatsapp_business_app',
+        status: 'sent',
+      },
+      { onConflict: 'wa_message_id', ignoreDuplicates: true },
+    );
+  }
+}
+
+/**
+ * Handle `account_update` — coexistence lifecycle. Meta reports offboarding
+ * (the number left the Cloud API) and reconnection here.
+ */
+async function handleAccountUpdate(value: WaChangeValue): Promise<void> {
+  const event = (value.event || '').toUpperCase();
+  if (!event) return;
+
+  let status: string | null = null;
+  if (event === 'PARTNER_REMOVED' || event === 'ACCOUNT_OFFBOARDED') {
+    status = 'disconnected';
+  } else if (event === 'ACCOUNT_RECONNECTED') {
+    status = 'connected';
+  }
+  if (!status) return;
+
+  await supabase
+    .from('whatsapp_config')
+    .update({ status, last_error: `account_update: ${event}` })
+    .eq('id', 1);
+
+  // Credentials may no longer be valid — force the next send to re-read.
+  invalidateCredentialsCache();
+}
+
+/**
+ * Persist raw `history` / `smb_app_state_sync` payloads.
+ *
+ * Meta allows the coexistence sync to be requested only once, within 24 hours
+ * of onboarding, so the payloads are captured now even though the UI that
+ * browses imported history/contacts is a later phase.
+ */
+async function handleSyncEvent(kind: string, value: WaChangeValue): Promise<void> {
+  await supabase.from('whatsapp_sync_events').insert({ kind, payload: value });
+
+  const column = kind === 'history' ? 'history_sync_status' : 'contact_sync_status';
+  await supabase
+    .from('whatsapp_config')
+    .update({ [column]: 'receiving' })
+    .eq('id', 1);
+}
+
 /**
  * Process the webhook body asynchronously (after the 200 is returned).
  */
 async function processBody(body: unknown): Promise<void> {
   const typed = body as {
     object?: string;
-    entry?: Array<{ changes?: Array<{ value?: WaChangeValue }> }>;
+    entry?: Array<{ changes?: Array<{ field?: string; value?: WaChangeValue }> }>;
   };
 
   if (typed.object !== 'whatsapp_business_account') return;
@@ -327,6 +496,27 @@ async function processBody(body: unknown): Promise<void> {
     for (const change of entry.changes || []) {
       const value = change.value;
       if (!value) continue;
+
+      // Coexistence fields. Classic payloads (field === 'messages', or absent)
+      // fall through to the original handling below, unchanged.
+      switch (change.field) {
+        case 'smb_message_echoes':
+          if (value.message_echoes?.length) {
+            await handleMessageEchoes(value.message_echoes);
+          }
+          continue;
+        case 'account_update':
+        case 'account_offboarded':
+        case 'account_reconnected':
+          await handleAccountUpdate(value);
+          continue;
+        case 'history':
+        case 'smb_app_state_sync':
+          await handleSyncEvent(change.field, value);
+          continue;
+        default:
+          break;
+      }
 
       if (value.statuses && value.statuses.length > 0) {
         await handleStatuses(value.statuses);
@@ -345,9 +535,33 @@ async function processBody(body: unknown): Promise<void> {
 // POST — incoming events
 // ---------------------------------------------------------------------------
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  // Read the RAW body once — the signature is computed over the exact bytes
+  // Meta sent, so it must be verified before parsing.
+  let raw: string;
+  try {
+    raw = await req.text();
+  } catch {
+    return NextResponse.json({ received: true }, { status: 200 });
+  }
+
+  // Reject oversized bodies before doing any work with them.
+  if (Buffer.byteLength(raw, 'utf8') > MAX_BODY_BYTES) {
+    // eslint-disable-next-line no-console
+    console.error('[whatsapp webhook] payload exceeds size limit — dropped');
+    return NextResponse.json({ received: true }, { status: 200 });
+  }
+
+  // Guarded: a no-op unless META_APP_SECRET is configured.
+  if (!verifySignature(raw, req.headers.get('x-hub-signature-256'))) {
+    // eslint-disable-next-line no-console
+    console.error('[whatsapp webhook] invalid X-Hub-Signature-256 — payload dropped');
+    // 200 so Meta does not retry a payload we will never accept.
+    return NextResponse.json({ received: true }, { status: 200 });
+  }
+
   let body: unknown;
   try {
-    body = await req.json();
+    body = JSON.parse(raw);
   } catch {
     // Malformed body — acknowledge so Meta does not retry endlessly.
     return NextResponse.json({ received: true }, { status: 200 });
